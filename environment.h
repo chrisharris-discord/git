@@ -90,6 +90,12 @@ struct repository;
 struct repo_config_values {
 	/* section "core" config values */
 	char *attributes_file;
+	char *excludes_file;
+	char *editor_program;
+	char *pager_program;
+	char *askpass_program;
+	char *apply_default_whitespace;
+	char *apply_default_ignorewhitespace;
 	int apply_sparse_checkout;
 	int trust_ctime;
 	int check_stat;
@@ -159,9 +165,20 @@ int repo_ignore_case(struct repository *repo);
  */
 int repo_trust_executable_bit(struct repository *repo);
 
+const char *repo_excludes_file(struct repository *repo);
+
 void repo_config_values_init(struct repo_config_values *cfg);
 
 int is_bare_repository(struct repository *repo);
+
+/*
+ * Frees memory allocated for dynamically loaded configuration values
+ * inside `repo_config_values`.
+ *
+ * As dynamically allocated variables are migrated into this struct,
+ * their FREE_AND_NULL() calls should be appended here.
+ */
+void repo_config_values_clear(struct repo_config_values *cfg);
 
 /*
  * TODO: All the below state either explicitly or implicitly relies on
@@ -189,8 +206,6 @@ int have_git_dir(void);
 extern int has_symlinks;
 extern int minimum_abbrev, default_abbrev;
 extern int assume_unchanged;
-extern char *apply_default_whitespace;
-extern char *apply_default_ignorewhitespace;
 extern unsigned long pack_size_limit_cfg;
 
 enum rebase_setup_type {
@@ -224,10 +239,6 @@ const char *get_commit_output_encoding(void);
 
 extern char *git_commit_encoding;
 extern char *git_log_output_encoding;
-
-extern char *editor_program;
-extern char *askpass_program;
-extern char *excludes_file;
 
 /*
  * The character that begins a commented line in user-editable file
