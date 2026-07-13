@@ -115,6 +115,8 @@ int init_apply_state(struct apply_state *state,
 		     struct repository *repo,
 		     const char *prefix)
 {
+	struct repo_config_values *cfg;
+
 	memset(state, 0, sizeof(*state));
 	state->prefix = prefix;
 	state->repo = repo;
@@ -133,8 +135,7 @@ int init_apply_state(struct apply_state *state,
 	strbuf_init(&state->root, 0);
 
 	git_apply_config(repo);
-
-	struct repo_config_values *cfg = repo_config_values(repo);
+	cfg = repo_config_values(repo);
 
 	if (cfg->apply_default_whitespace &&
 	    parse_whitespace_option(state, cfg->apply_default_whitespace))
